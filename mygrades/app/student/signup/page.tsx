@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Select from 'react-select'
 import { Subject } from '../StudentStore'
 import { useStudentStore } from '../StudentStore'
+import { clear } from 'console'
 
 
 const page = () => {
@@ -39,10 +40,18 @@ const page = () => {
         addGrade("1", {id:"2", value:4.5, date:"05.01.2025"})
         addGrade("1", {id:"3", value:5, date:"13.01.2025"})
         addGrade("1", {id:"4", value:3, date:"26.01.2025"})
+
+        addGrade("2", {id:"1", value:3.5, date:"02.03.2025"})
+        addGrade("2", {id:"2", value:5.5, date:"07.03.2025"})
+        addGrade("2", {id:"3", value:4, date:"08.03.2025"})
+        addGrade("2", {id:"4", value:3.5, date:"15.03.2025"})
+        addGrade("2", {id:"5", value:3.5, date:"20.03.2025"})
+        addGrade("2", {id:"6", value:5, date:"30.03.2025"})
     }
 
     const handleClearGrade = () => {
-        clearGrade("1");
+        clearGrade("1")
+        clearGrade("2")
     }
 
   return (

@@ -9,16 +9,15 @@ const Card = ({
     period,
     href,
 }: {
-    title: string;
+    title: any;
     value: number;
     period: string;
     href: string;
 
 }) => {
 
-    return <div className='col-span-4 p-4 rounded border shadow'>
+    return <a href={href} className='col-span-4 p-4 rounded border shadow'>
 
-        <a href={href}>
         <div className='flex mb-8 items-start justify-between'>
             <div>
                 <h3 className='text-stone-500 mb-2 text-sm'>{title}</h3>
@@ -28,8 +27,7 @@ const Card = ({
         </div>
         
         <p className='text-xs text-stone-500'>{period}</p>
-        </a>
-    </div>
+    </a>
     
 }
 
@@ -37,29 +35,39 @@ const StatCards = () => {
 
     const getSubjectMoy = useStudentStore((state) => state.getSubjectMoy)
 
+    const MEP = useStudentStore((state) => state.subjects.find((s) => s.id === "1"))
+    const BioChimie = useStudentStore((state) => state.subjects.find((s) => s.id === "2"))
+
     const [mathMoy, setMathMoy] = useState<number>(0)
+    const [BioChimieMoy, setBioChimieMoy] = useState<number>(0)
+
 
     useEffect(() => {
-        const moy = getSubjectMoy("1")
-        setMathMoy(moy)
+        const moy_m = getSubjectMoy("1")
+        setMathMoy(moy_m)
+    }, [getSubjectMoy])
+
+    useEffect(() => {
+        const moy_i = getSubjectMoy("2")
+        setBioChimieMoy(moy_i)
     }, [getSubjectMoy])
 
   return (
     <>
         <Card
-        title='Mathématique et Physique' 
+        title={MEP?.name} 
         value={mathMoy}
         period='Du 1 Janvier au 31 Janvier'
         href='../student/subjects'
         />
         <Card
-        title='Italien' 
-        value={3}
+        title={BioChimie?.name}
+        value={BioChimieMoy}
         period='Du 1 Janvier au 31 Janvier'
         href='../student/subjects'
         />
         <Card
-        title='Biologie et Chimie' 
+        title='Italien' 
         value={4.5}
         period='Du 1 Janvier au 31 Janvier'
         href='../student/subjects'

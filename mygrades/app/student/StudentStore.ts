@@ -57,8 +57,11 @@ export const useStudentStore = create<Student>()(
             clearSubjectGrade: (subjectID) => set((state) => ({
                 subjects: state.subjects.map(subject => subject.id === subjectID ? {...subject, grades: []}: subject)
             })),
+
             addSubject: (subject) => set({ subjects: [...get().subjects, subject]}),
+
             removeSubject: (subjectID) => set({subjects: get().subjects.filter((s) => s.id !== subjectID)}),
+            
             addGrade: (subjectID, newGrade) => set({subjects: get().subjects.map((s) => 
                 s.id === subjectID ? {...s, grades: [...s.grades, newGrade]}: s)})
         }),
