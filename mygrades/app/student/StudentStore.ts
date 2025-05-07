@@ -18,7 +18,10 @@ export type Subject = {
 type Student = {
     id: string;
     name: string;
+    email: string;
     subjects: Subject[];
+    setName: (name: string) => void;
+    setEmail: (email: string) => void;
     getSubjectMoy: (SubjectID: string) => number;
     addSubject: (newSubject: Subject) => void;
     removeSubject: (subjectID: string) => void;
@@ -31,7 +34,11 @@ export const useStudentStore = create<Student>()(
         (set, get) => ({
             id:"",
             name:"",
+            email:"",
             subjects: [],
+
+            setName: (newName: string) => set(() => ({name: newName})),
+            setEmail: (newEmail: string) => set(() => ({email: newEmail})) ,
 
             getSubjectMoy: (subjectID: string) => {
 

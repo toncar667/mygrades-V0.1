@@ -1,81 +1,109 @@
 "use client"
 
-import React, { useState } from 'react'
-import Select from 'react-select'
-import { Subject } from '../StudentStore'
+import dynamic from 'next/dynamic'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useStudentStore } from '../StudentStore'
-import { clear } from 'console'
+import { SingleValue } from 'react-select'
 
+type OptionType = {
+    value: string;
+    label: string;
+  };
 
 const page = () => {
 
-    const OS_SubjectOptions: Subject[] = [
-        { id: "1", name:"Mathématique et Physique", value: "1", label: "Mathématique et Physique", grades:[]},
-        { id:"2", name:"Biologie et Chimie", value: "2", label: "Biologie et Chimie", grades:[]},
-        { id:"3", name:"Italien", value: "3", label: "Italien", grades:[]},
-        { id:"4", name:"Espagnol", value:"4", label: "Espagnol", grades:[]}
-    ]
 
-    const [selectedOption, setSelectedOption] = useState<Subject | null>(null)
+    const Select = dynamic(() => import('react-select'), { ssr: false }) as unknown as React.FC<any>;
 
-    const setOS_Option = useStudentStore((state) => state.addSubject)
+    const OS_SubjectOptions = useMemo(() =>[
+        "Physique et application des mathématiques",
+        "Biologie et Chimie",
+        "Italien",
+        "Espagnol",
+        "Economie et droits",
+        "Grec",
+        "Latin",
+        "Musique",
+        "Philosophie et Psychologie",
+        "Arts visuels",
+    ], []);
 
-    const addGrade = useStudentStore((state) => state.addGrade)
+    const selectOptions = OS_SubjectOptions.map((subject) => ({
+        value: subject,
+        label: subject,
+    }));
 
-    const clearGrade = useStudentStore((state) => state.clearSubjectGrade)
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const setOS_Option = useStudentStore((state) => state.addSubject);
+    const removeSubject = useStudentStore((state) => state.removeSubject)
+    const setStudentName = useStudentStore((state) => state.setName)
+    const setStudentEmail = useStudentStore((state) => state.setEmail)
 
-    const mpGrade = useStudentStore((state) => state.subjects.find((s) => s.id === "1")?.grades)
+    const StudentName = useStudentStore((state) => state.name)
+    const StudentEmail = useStudentStore((state) => state.email)
 
-    const handleAddSubject = () => {
-        if(selectedOption !== null){
-        }
+    const [osText, setOsText] = useState("")
+    const [osTextVisible, setOsTextVisible] = useState("invisible")
+
+    const handleAddSubject = useCallback(() => {
         if (selectedOption) {
-            const { value, label, ...subjectData } = selectedOption
-            setOS_Option(subjectData)
+        const newSubject = {
+            id: "1",
+            name: selectedOption,
+            grades: [],
+        };
+        removeSubject("1")
+        setOS_Option(newSubject);
+        setOsText("L'OS a été ajoutée")
+        setOsTextVisible("visible")
+        } else {
+            setOsTextVisible("visible")
+            setOsText("Veuillez choisir une OS")
         }
-    }
+    }, [selectOptions, setOS_Option]);
 
-    const handleAddGrade = () => {
-        addGrade("1", {id:"1", value:4.5, date:"01.01.2025"})
-        addGrade("1", {id:"2", value:4.5, date:"05.01.2025"})
-        addGrade("1", {id:"3", value:5, date:"13.01.2025"})
-        addGrade("1", {id:"4", value:3, date:"26.01.2025"})
+    const handleRemoveSubject = () => {
+        removeSubject("1")
+    } 
 
-        addGrade("2", {id:"1", value:3.5, date:"02.03.2025"})
-        addGrade("2", {id:"2", value:5.5, date:"07.03.2025"})
-        addGrade("2", {id:"3", value:4, date:"08.03.2025"})
-        addGrade("2", {id:"4", value:3.5, date:"15.03.2025"})
-        addGrade("2", {id:"5", value:3.5, date:"20.03.2025"})
-        addGrade("2", {id:"6", value:5, date:"30.03.2025"})
-    }
+    return (
+            <div className='p-4'>
+                <div className='p-4 gap-10'>
 
-    const handleClearGrade = () => {
-        clearGrade("1")
-        clearGrade("2")
-    }
 
-  return (
-    <div>
-        <Select 
-            options={OS_SubjectOptions}
-            value={selectedOption}
-            name='OS_Select'
-            isSearchable
-            onChange={(newValue) => setSelectedOption(newValue)}
-        />
+                    <div>
+                        <h1 className='text-xl font-medium mb-2'>Prénom</h1>
+                        <div>
+                            <input className='h-10 w-full mb-5 bg-white border border-stone-300 p-2 text-stone-600 rounded-sm' type="text" placeholder='Entrez votre prénom' value={StudentName} onChange={(n) => setStudentName(n.target.value)}/>
+                        </div>
+                    </div>
 
-        <button onClick={handleAddSubject}>Ajouter</button>
+                    <div>
+                    <h1 className='text-xl font-medium mb-2'>E-mail</h1>
+                        <div>
+                            <input className='h-10 w-full mb-5 bg-white border border-stone-300 p-2 text-stone-600 rounded-sm' type="text" placeholder='Entrez votre e-mail' value={StudentEmail} onChange={(e) => setStudentEmail(e.target.value)}/>
+                        </div>
+                    </div>
 
-        <button onClick={handleAddGrade}>Ajouter les notes</button>
-        <ul>
-            {mpGrade?.map((grade, index) => (
-                <li key={index}>{grade.value}</li>
-            ))}
-        </ul>
-
-        <button onClick={handleClearGrade}>clear les note</button>
+                    <div>
+                        <h1 className='text-xl font-medium'>Choisir son OS</h1>
+                        <div className='mt-2 mb-5'>
+                            <Select
+                            
+                            options={selectOptions}
+                            value={selectOptions.find((opt) => opt.value === selectedOption) || null}
+                            onChange={(newValue: SingleValue<OptionType>) => setSelectedOption(newValue?.value || null)}
+                            isSearchable
+                            name="OS_Select"
+                            />
+                        </div>
+                        <button onClick={handleAddSubject} className='bg-white h-10 w-32 rounded-md border border-stone-300 text-stone-600 cursor-pointer hover:bg-gray-100'>Confirmer l'OS</button>
+                        <h2 className={osTextVisible}>{osText}</h2>
+                    </div>
+                </div>
+                <button onClick={handleRemoveSubject}>Enlever l'OS</button>
     </div>
-  )
+  );
 }
 
-export default page
+export default page;

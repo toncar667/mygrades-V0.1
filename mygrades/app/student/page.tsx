@@ -36,12 +36,12 @@ const page = () => {
             <ul>
                 {subjects.map((subject) => (
                     <li key={subject.id}>
-                        {subject.name} - Note: {subject.grades.forEach.name}
+                        {subject.name} - Note: {subject.grades.map((grade) => grade.value).join(", ")}
                     </li>
                 ))}
             </ul>
 
-            <button onClick={handleAdd}>Ajouter la physique</button>
+            <button  className="m-2" onClick={handleAdd}>Ajouter la physique</button>
             <button onClick={handleRemove}>Enlever la physique</button>
         </div>
     )

@@ -28,9 +28,9 @@ const Grid = () => {
   
   else if (pathName === "/student/subjects") {
     return (
-      <div className='px-4 grid gap-3 grid-cols-12'>
-        <Graph subjectID='2'/>
-      </div>
+        <div className='px-4 grid gap-3 grid-cols-12'>
+          <Graph subjectID='2'/>
+        </div>
     )
   }
 
