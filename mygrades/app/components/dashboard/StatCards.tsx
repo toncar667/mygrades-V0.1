@@ -9,7 +9,7 @@ const GradeCard = ({
     period,
     href,
 }: {
-    title: any;
+    title: String | undefined;
     value: number;
     period: string;
     href: string;

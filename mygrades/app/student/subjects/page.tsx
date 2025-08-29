@@ -5,7 +5,6 @@ import DashBoard from '@/app/components/dashboard/DashBoard'
 import SideBar from '@/app/components/sideBar/SideBar'
 import React from 'react'
 import { useGradeModalStore, useSubjectModalStore } from '@/app/GlobalStateStore'
-import { useStudentStore } from '../StudentStore'
 import AddGradePanel from '@/app/components/dashboard/modals/AddGradePanel'
 
 const page = () => {
@@ -14,7 +13,6 @@ const page = () => {
 
   const isGradePanelOpen = useGradeModalStore((state) => state.isGradeModalOpen)
 
-  const subjectList = useStudentStore((state) => state.subjects)
 
   return (
     <div>
