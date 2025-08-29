@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuthStore } from '@/app/student/AccountStore'
 import { useStudentStore } from '@/app/student/StudentStore'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -11,22 +12,26 @@ const AccountToggle = () => {
   const router = useRouter()
 
   const handleClick = () => {
-    router.push("/student/signup")
+    router.push("/student/login")
   }
 
   const studentName = useStudentStore((state) => state.name)
-  const studentEmail = useStudentStore((state) => state.email)
+  const currentUser = useAuthStore((state) => state.currentUser?.student.name)
+  const studentEmail = useAuthStore((state) => state.currentUser?.email)
+
+  console.log("StudentStore.name: ", studentName)
+  console.log("CurrentUser.name: ", currentUser)
+  console.log("email:", studentEmail)
 
   return (
-    <div className='border-b mb-4 mt-2 pb-4 border-stone-300'>
-        <button onClick={handleClick} className='flex p-0.5 hover:bg-stone-200 rounded transition-colors relative gap-2 w-full items-center hover:cursor-pointer'>
-            <Image src="/pen_avatar.svg" alt='avatar' width={32} height={32} className='shrink-0'/>
-            <div className='text-start'>
-                <span className='text-sm font-semibold block'>{studentName}</span>
-                <span className='text-xs block text-stone-500'>{studentEmail}</span>
+    <div className='border-b mb-4 pb-4 border-white'>
+        <button onClick={handleClick} className='flex hover:bg-blue-950 rounded-lg transition-colors relative gap-2 w-full items-center hover:cursor-pointer'>
+            <div className='text-start p-2'>
+                <span className='text-sm font-semibold block text-white'>{studentName}</span>
+                <span className='text-xs block text-white'>{studentEmail}</span>
             </div>
 
-            <HiChevronDown className='absolute right-2 text-xl'/>
+            <HiChevronDown className='absolute right-2 text-xl text-white'/>
         </button>
     </div>
   )

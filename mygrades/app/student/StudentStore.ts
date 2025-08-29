@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useAuthStore } from "./AccountStore";
 
 type Grade = {
     id:string;
@@ -10,35 +11,56 @@ type Grade = {
 export type Subject = {
     id: string;
     name: string;
+    color: string;
     grades: Grade[];
     value?: string;
     label?: string;
 }
 
-type Student = {
-    id: string;
+export type Student = {
     name: string;
-    email: string;
     subjects: Subject[];
-    setName: (name: string) => void;
-    setEmail: (email: string) => void;
-    getSubjectMoy: (SubjectID: string) => number;
-    addSubject: (newSubject: Subject) => void;
-    removeSubject: (subjectID: string) => void;
-    addGrade: (subjectID: string, newGrade: Grade) => void;
-    clearSubjectGrade: (subjectID: string) => void;
 }
 
-export const useStudentStore = create<Student>()(
+export type StudentStore = Student & {
+    latestGrade: Subject;
+    setName: (newName: string) => void;
+    addSubject: (subject: Subject) => void;
+    removeSubject: (subjectID: string) => void;
+    addGrade: (subjectID: string, newGrade: Grade) => void;
+    clearSubjectGrades: (subjectID: string) => void;
+    getSubjectMoy: (subjectID: string) => number;
+    getOverallMoy: () => number;
+    setAll: (student: Student) => void;
+    reset: () => void;
+}
+
+export const useStudentStore = create<StudentStore>()(
     persist(
         (set, get) => ({
-            id:"",
             name:"",
             email:"",
             subjects: [],
 
+            latestGrade: {
+                id: "0",
+                name: "Évolution des Notes",
+                color: "",
+                grades: []
+            },
+
+            setAll: (student: Student) => set(() => ({
+                name: student.name,
+                subjects: student.subjects
+            })),
+
+            reset: () => set(() => ({
+                id: "",
+                name: "",
+                subjects: []
+            })),
+
             setName: (newName: string) => set(() => ({name: newName})),
-            setEmail: (newEmail: string) => set(() => ({email: newEmail})) ,
 
             getSubjectMoy: (subjectID: string) => {
 
@@ -54,23 +76,96 @@ export const useStudentStore = create<Student>()(
                 if(subjectGrade?.length !== 0) {
                     moy = gradeSum / (subjectGrade?.length)
                 }
-            
+                
                 const moyRounded = Math.round(moy * 2) / 2;
-            
+                
                 return moyRounded;
                 
             },
 
-            clearSubjectGrade: (subjectID) => set((state) => ({
-                subjects: state.subjects.map(subject => subject.id === subjectID ? {...subject, grades: []}: subject)
-            })),
+            getOverallMoy: () => {
 
-            addSubject: (subject) => set({ subjects: [...get().subjects, subject]}),
+                const subjectsGrades = get().subjects.map((s) => s.grades);
+                let totalSum = 0;
+                let totalCount = 0;
+                let moy = 0;
 
-            removeSubject: (subjectID) => set({subjects: get().subjects.filter((s) => s.id !== subjectID)}),
+                subjectsGrades?.forEach((subject) => {
+                    subject.forEach((note) => {
+                        totalSum += note.value;
+                        totalCount += 1;
+                    })
+                });
+
+                if(totalCount !== 0) {
+                    moy = Math.round((totalSum / totalCount) * 2) / 2;
+                }
+
+                return moy;
+            },
+
+            clearSubjectGrades: (subjectID: string) => {
+                
+                const updatedSubjects = get().subjects.map(subject => subject.id === subjectID ? {...subject, grades: []}: subject)
+                
+                set({ subjects: updatedSubjects })
+                
+                const auth = useAuthStore.getState()
+
+                if(auth.currentUser){
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects
+                    })
+                }
+            },
+
+            addSubject: (subject: Subject) => {
+                
+                const updatedSubjects = [...get().subjects, subject]
+
+                set({subjects: updatedSubjects})
+
+                const auth = useAuthStore.getState()
+
+                if(auth.currentUser){
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects
+                    })
+                }
+            },
+
+            removeSubject: (subjectID: string) => set({subjects: get().subjects.filter((s) => s.id !== subjectID)}),
             
-            addGrade: (subjectID, newGrade) => set({subjects: get().subjects.map((s) => 
-                s.id === subjectID ? {...s, grades: [...s.grades, newGrade]}: s)})
+            addGrade: (subjectID:string, newGrade:Grade) => 
+            {
+                // sujet choisi dans la liste avec l'id correspondant au paramètre entré. si le sujet de ne correspond pas,
+                // on le laisse tel quel. 
+
+                const updatedSubjects = get().subjects.map((s) => s.id === subjectID ? {...s, grades: [...s.grades, newGrade]}: s)
+                
+                // quand on modifie l'état d'un sujet, on modifie l'état de la liste des sujet.
+                // donc on vient modifier la liste de sujet avec une nouvelle liste contenant tout les sujet ainsi que
+                // celui qui vient d'être modifié
+
+                set({subjects: updatedSubjects})
+                
+                // ajoute a la liste des dernieres notes
+                set({latestGrade: {
+                    ...get().latestGrade,
+                    grades: [...get().latestGrade.grades, newGrade]
+                }}) 
+
+                // synchro entre le StudentStore et AuthStore
+                const auth = useAuthStore.getState()
+                if(auth.currentUser){
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects
+                    })
+                }
+            }
         }),
         {
             name: "student-store",

@@ -6,11 +6,11 @@ import DashBoard from '@/app/components/dashboard/DashBoard'
 
 const page = () => {
   return (
-    <div className='p-4'>
-      <div className='w-[220px] fixed h-full scrollbar-hide [&::-webkit-scrollbar]:hidden'>
+    <div className=''>
+      <div className='w-[280px] fixed h-full scrollbar-hide [&::-webkit-scrollbar]:hidden'>
         <SideBar />
       </div>
-      <div className='flex-1 ml-[220px]'>
+      <div className='flex-1 ml-[280px]'>
         <DashBoard />
       </div>
     </div>

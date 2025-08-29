@@ -23,12 +23,12 @@ const RouteSelect = () => {
         return <button onClick={() => {
             router.push(link)
         }} className={`flex items-center justify-start 
-            gap-2 w-full rounded px-2 py-1.5 text-sm 
+            gap-2 w-full rounded-lg px-2 py-1.5 text-lg font-normal 
             transition-[box-shadow,_background-color,_color] hover:cursor-pointer 
-            ${selected() ? "bg-white text-stone-950 bg-transparent" : "hover:bg-stone-200 bg-transparent text-stone-500 shadow-none"}`}
+            ${selected() ? "bg-[#3c83f6] text-white" : "hover:bg-blue-950 bg-transparent text-white shadow-none"}`}
         >
-            <Icon className={selected() ? "text-blue-400": ""}/>
-            <span className={selected() ? "text-blue-400": ""}>{title}</span>
+            <Icon className={selected() ? "text-white": ""}/>
+            <span className={selected() ? "text-white": ""}>{title}</span>
         </button>
     }
   return (
