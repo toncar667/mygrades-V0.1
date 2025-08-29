@@ -2,7 +2,6 @@
 
 import { useAuthStore } from '@/app/student/AccountStore'
 import { useStudentStore } from '@/app/student/StudentStore'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { HiChevronDown } from "react-icons/hi"

@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import StatCards from './StatCards'
 import Graph from './Graph'
 import { usePathname } from 'next/navigation'
 import { useStudentStore } from '@/app/student/StudentStore'

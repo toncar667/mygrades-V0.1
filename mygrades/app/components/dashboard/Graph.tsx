@@ -3,7 +3,7 @@
 import { useStudentStore } from '@/app/student/StudentStore';
 import React from 'react'
 import {HiBeaker} from "react-icons/hi"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { HiOutlineTrash } from "react-icons/hi";
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import { useGradeModalStore } from '@/app/GlobalStateStore';

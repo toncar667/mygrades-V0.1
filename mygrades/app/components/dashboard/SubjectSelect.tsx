@@ -6,7 +6,7 @@ const SubjectSelect = () => {
 
     const subjects = useStudentStore((state) => state.subjects)
     
-    const [selectedSubject, setSelectedSubject] = useState<boolean>(false);
+    //const [selectedSubject, setSelectedSubject] = useState<boolean>(false);
     
     const handleClick = () => ({
         

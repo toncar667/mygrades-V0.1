@@ -5,17 +5,12 @@ import { useStudentStore } from '@/app/student/StudentStore';
 import { 
   BarChart, 
   Bar, 
-  LineChart, 
-  Line, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell,
-  Legend
 } from "recharts";
 
 

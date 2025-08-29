@@ -1,5 +1,4 @@
 import React from 'react'
-import TopBar from './TopBar'
 import Grid from './Grid'
 
 const DashBoard = () => {
