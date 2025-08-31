@@ -19,13 +19,13 @@ const page = () => {
       {isSubjectPanelOpen && !isGradePanelOpen ? <AddSubjectPanel />: null}
       {isGradePanelOpen && !isSubjectPanelOpen ? <AddGradePanel/>: null }
     <div className=''>
-      <div className='w-[280px] fixed h-full scrollbar-hide [&::-webkit-scrollbar]:hidden'>
-        <SideBar />
+        <div className="flex">
+          <SideBar />
+          <div className="flex-1 md:ml-[280px]">
+            <DashBoard />
+          </div>
+        </div>
       </div>
-      <div className='flex-1 ml-[280px]'>
-        <DashBoard />
-      </div>
-    </div>
     </div>
   )
 }

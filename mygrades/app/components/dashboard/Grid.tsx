@@ -9,6 +9,7 @@ import { useSubjectModalStore } from '@/app/GlobalStateStore'
 import BarGradeChart from './BarGradeChart'
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import SubjectSelect from './SubjectSelect'
+import SelectedSubject from './SelectedSubject'
 
 
 
@@ -101,10 +102,13 @@ const Grid = () => {
             </div>
               <button onClick={openSubjectPanel} className='flex border rounded-sm h-12 md:h-10 p-2 mt-4 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Ajouter une matière</span></button>
           </div>
-          <div className='grid grid-cols-3'>
+          <div className='grid grid-cols-3 gap-5'>
             <div className='rounded-lg border col-span-3 lg:col-span-1 p-4 shadow-sm transition'>
               <h1 className='p-4 text-2xl font-semibold'>Matières</h1>
               <SubjectSelect />
+            </div>
+            <div className='rounded-lg border col-span-3 lg:col-span-2 p-4 shadow-sm transition'>
+              <SelectedSubject />
             </div>
           </div>
         </div>

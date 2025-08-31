@@ -1,8 +1,8 @@
-import { useGradeModalStore } from '@/app/GlobalStateStore'
+import { useGradeModalStore, useSelectedSubjectStore } from '@/app/GlobalStateStore'
 import { useStudentStore } from '@/app/student/StudentStore'
+import { setGlobal } from 'next/dist/trace';
 import React, { useState } from 'react'
-import { HiMinus } from 'react-icons/hi'
-import Select from "react-select"
+import { HiMinus, HiOutlinePlusCircle } from 'react-icons/hi'
 
 
 type Grade = {
@@ -19,30 +19,29 @@ const AddGradePanel = () => {
 
     const addGrade = useStudentStore((state) => state.addGrade)
 
-    const options = GetStudentOptions.map(o => ({
-        value: o.name,
-        label: o.name
-    }))
+    const setGlobalSelectedSubject = useSelectedSubjectStore((state) => state.setSelectedSubject)
+    const latestGrades = useStudentStore((state) => state.latestGrade)
 
     const [newGrade, setNewGrade] = useState<Grade>({
       //id accéder a la liste de tt les id et +1
-        id: Date.now().toString(),
+        id: Math.random().toString(36).substring(2, 9),
         value: 0,
         date: new Date().toString(),
     })
     
-    const [selectedOption, setSelectedOption] = useState<string | undefined>(undefined)
+
+    const selectedSubjectID = useSelectedSubjectStore((state) => state.selectedSubjectID)
+    const subject = useStudentStore((state) => state.subjects.find((s) => s.id === selectedSubjectID))
 
     const [gradeValue, setGradeValue] = useState<string>('')
 
     const handleAddGrade = () => {
 
-        const targetSubject = GetStudentOptions.find((o) => o.name === selectedOption)
+        const targetSubject = subject
 
         if(targetSubject && newGrade){
             addGrade(targetSubject.id, newGrade)
         }
-
         close()
     }
 
@@ -58,20 +57,16 @@ const AddGradePanel = () => {
           </div>
   
           <div className='mt-5'>
-            
-            <h1 className='text-xl font-medium'>Nom</h1>
 
-            <Select options={options} value={options.find((o) => o.value === selectedOption)} onChange={(newValue) => setSelectedOption(newValue?.value)}/>
-
-            <input type="text" placeholder='Entrez la nouvelle note' value={gradeValue} onChange={(e) => setGradeValue(e.target.value)} onBlur={() => {
+            <input className='border w-full rounded-sm p-2' type="text" placeholder='Entrez la nouvelle note' value={gradeValue} onChange={(e) => setGradeValue(e.target.value)} onBlur={() => {
                 const num = Number(gradeValue)
+                const id = (latestGrades.grades.length + 1).toString()
                 if (!isNaN(num)) {
-                    setNewGrade({ ...newGrade, value: num })
+                    setNewGrade({ ...newGrade, id: id, value: num })
                 }
             }}/>
-
-            <button onClick={handleAddGrade} className='border rounded-md p-2 hover:bg-stone-50 hover:text-blue-400 transition duration-300'>Enregistrer</button>
-            <span>{selectedOption}</span>
+            <button onClick={handleAddGrade} className='flex border rounded-sm h-12 md:h-10 p-2 mt-4 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Ajouter</span></button>
+            <span className='text-sm font-mono'>Une nouvelle note sera ajouté à <span className='font-bold'>{subject?.name}</span></span>
           </div>
         </div>
       </div>

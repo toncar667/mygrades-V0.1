@@ -24,6 +24,7 @@ export type Student = {
 
 export type StudentStore = Student & {
     latestGrade: Subject;
+    updateLatestGrade: () => void;
     setName: (newName: string) => void;
     addSubject: (subject: Subject) => void;
     removeSubject: (subjectID: string) => void;
@@ -48,6 +49,15 @@ export const useStudentStore = create<StudentStore>()(
                 color: "",
                 grades: []
             },
+
+            updateLatestGrade: () => {
+                const updatedGrades = get().subjects.flatMap(s => s.grades)
+                
+                set({
+                    latestGrade: {id: "0", name: "Évolution des Notes", color: "", grades: updatedGrades}
+                })
+            },
+                
 
             setAll: (student: Student) => set(() => ({
                 name: student.name,
@@ -107,7 +117,6 @@ export const useStudentStore = create<StudentStore>()(
             clearSubjectGrades: (subjectID: string) => {
                 
                 const updatedSubjects = get().subjects.map(subject => subject.id === subjectID ? {...subject, grades: []}: subject)
-                
                 set({ subjects: updatedSubjects })
                 
                 const auth = useAuthStore.getState()
@@ -136,7 +145,29 @@ export const useStudentStore = create<StudentStore>()(
                 }
             },
 
-            removeSubject: (subjectID: string) => set({subjects: get().subjects.filter((s) => s.id !== subjectID)}),
+            removeSubject: (subjectID: string) => {
+                const updatedSubjects = get().subjects.filter((s) => s.id !== subjectID)
+                set({subjects: updatedSubjects})
+
+                set({
+                    latestGrade: {
+                        id: "0",
+                        name: "Évolution des Notes",
+                        color: "",
+                        grades: updatedSubjects.flatMap(s => s.grades)
+                    }
+            });
+
+                const auth = useAuthStore.getState()
+
+                if(auth.currentUser){
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects
+                    })
+                }
+                
+            },
             
             addGrade: (subjectID:string, newGrade:Grade) => 
             {
@@ -157,6 +188,8 @@ export const useStudentStore = create<StudentStore>()(
                     grades: [...get().latestGrade.grades, newGrade]
                 }}) 
 
+                get().updateLatestGrade()
+
                 // synchro entre le StudentStore et AuthStore
                 const auth = useAuthStore.getState()
                 if(auth.currentUser){
@@ -172,3 +205,4 @@ export const useStudentStore = create<StudentStore>()(
         }
     ),
 )
+
