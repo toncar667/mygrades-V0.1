@@ -14,13 +14,13 @@ type GradeModalStore = {
 }
 
 type SelectedSubjectStore = {
-    selectedSubjectID: string | null;
-    setSelectedSubject: (subjectID: string | null) => void;
+    selectedSubjectID: string;
+    setSelectedSubject: (subjectID: string) => void;
 }
 
 export const useSelectedSubjectStore = create<SelectedSubjectStore>((set) => ({
-    selectedSubjectID: null,
-    setSelectedSubject: (subjectID: string | null) => set({selectedSubjectID: subjectID})
+    selectedSubjectID: "",
+    setSelectedSubject: (subjectID: string) => set({selectedSubjectID: subjectID})
 }))
 
 export const useGradeModalStore = create<GradeModalStore>((set) => ({

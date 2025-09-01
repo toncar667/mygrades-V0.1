@@ -174,7 +174,7 @@ export const useStudentStore = create<StudentStore>()(
                 // sujet choisi dans la liste avec l'id correspondant au paramètre entré. si le sujet de ne correspond pas,
                 // on le laisse tel quel. 
 
-                const updatedSubjects = get().subjects.map((s) => s.id === subjectID ? {...s, grades: [...s.grades, newGrade]}: s)
+                const updatedSubjects = get().subjects.map((s) => s.id === subjectID ? {...s, grades: [...s.grades, newGrade]}  :  s)
                 
                 // quand on modifie l'état d'un sujet, on modifie l'état de la liste des sujet.
                 // donc on vient modifier la liste de sujet avec une nouvelle liste contenant tout les sujet ainsi que
@@ -182,7 +182,7 @@ export const useStudentStore = create<StudentStore>()(
 
                 set({subjects: updatedSubjects})
                 
-                // ajoute a la liste des dernieres notes
+                // ajoute à la liste des dernieres notes
                 set({latestGrade: {
                     ...get().latestGrade,
                     grades: [...get().latestGrade.grades, newGrade]
