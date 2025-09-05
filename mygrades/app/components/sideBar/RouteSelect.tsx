@@ -22,8 +22,7 @@ const RouteSelect = () => {
 
         return <button onClick={() => {
             router.push(link)
-        }} className={`flex items-center justify-start 
-            gap-2 w-full rounded-lg px-2 py-1.5 text-lg font-normal 
+        }} className={`flex items-center justify-start gap-2 w-full rounded-lg px-2 py-1.5 text-lg font-normal 
             transition-[box-shadow,_background-color,_color] hover:cursor-pointer 
             ${selected() ? "bg-[#3c83f6] text-white" : "hover:bg-blue-950 bg-transparent text-white shadow-none"}`}
         >
@@ -32,7 +31,7 @@ const RouteSelect = () => {
         </button>
     }
   return (
-    <div className='space-y-1'>
+    <div className='space-y-2'>
         <Route link='/student/dashboard' Icon={HiHome} title='Tableau de bord' />
         <Route link='/student/agenda' Icon={HiCalendar} title='Agenda'/>
         <Route link='/student/subjects' Icon={HiAcademicCap} title='Mes matières'/>

@@ -1,22 +1,13 @@
 "use client"
 
-import dynamic from 'next/dynamic'
 import React, { useState } from 'react'
 import { Subject } from '../StudentStore'
-import { SingleValue } from 'react-select'
 import { Account, useAuthStore } from '../AccountStore'
 import { useRouter } from 'next/navigation'
 
-type OptionType = {
-    value: string;
-    label: string;
-  };
-
 const page = () => {
 
-    const Router = useRouter()
-
-    const Select = dynamic(() => import('react-select'), { ssr: false }) as unknown as React.FC<any>;
+    const router = useRouter()
 
     const OS_SubjectOptions = [
         "Physique et application des mathématiques",
@@ -47,7 +38,7 @@ const page = () => {
     const [osText, setOsText] = useState("")
     const [osTextVisible, setOsTextVisible] = useState("invisible")
 
-    const handleAddSubject = ():Subject | undefined => {
+    const handleAddSubject = () => {
         if (selectedOption) {
         const newSubject: Subject = {
             id: "1",
@@ -79,11 +70,12 @@ const page = () => {
         }
         createNewAccount(newAccount);
         console.log("compte crée")
+        router.push("/student/login")
 
     }
 
     return (
-            <div className='p-4'>
+            <div className='p-4 text-white'>
                 <div className='p-4 gap-10'>
                     <div>
                         <h1 className='text-xl font-medium mb-2'>Prénom et nom</h1>
@@ -109,13 +101,11 @@ const page = () => {
                     <div>
                         <h1 className='text-xl font-medium'>Choisir son OS</h1>
                         <div className='mt-2 mb-5'>
-                            <Select
-                            options={selectOptions}
-                            value={selectOptions.find((opt) => opt.value === selectedOption) || null}
-                            onChange={(newValue: SingleValue<OptionType>) => setSelectedOption(newValue?.value || null)}
-                            isSearchable
-                            name="OS_Select"
-                            />
+                            <select className='h-10 w-full mb-5 bg-white border border-stone-300 p-2 text-stone-600 rounded-sm' name="options" id="options" onChange={(e) => setSelectedOption(e.target.value || null)}>
+                                {selectOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                ))}
+                            </select>
                         </div>
                         <button onClick={handleSignUp} className='bg-white h-10 w-32 rounded-md border border-stone-300 text-stone-600 cursor-pointer hover:bg-gray-100'>S'enregistrer</button>
                         <h2 className={osTextVisible}>{osText}</h2>

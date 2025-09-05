@@ -2,7 +2,6 @@ import { useGradeModalStore, useSelectedSubjectStore } from '@/app/GlobalStateSt
 import { useStudentStore } from '@/app/student/StudentStore'
 import { HiOutlinePlusCircle } from 'react-icons/hi'
 import { HiOutlineTrash } from "react-icons/hi";
-import Graph from './Graph';
 
 const SelectedSubject = () => {
 

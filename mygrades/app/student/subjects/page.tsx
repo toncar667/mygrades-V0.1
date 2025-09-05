@@ -10,9 +10,7 @@ import AddGradePanel from '@/app/components/dashboard/modals/AddGradePanel'
 const page = () => {
 
   const isSubjectPanelOpen = useSubjectModalStore((state) => state.isSubjectModalOpen)
-
   const isGradePanelOpen = useGradeModalStore((state) => state.isGradeModalOpen)
-
 
   return (
     <div>

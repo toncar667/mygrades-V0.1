@@ -16,9 +16,8 @@ const page = () => {
     const currentUser = useAuthStore((state) => state.currentUser)
 
         const handleLogin = () => {
-    
             const success = login(StudentEmail, loginPassword)
-    
+            
             if(!success) {
                 setLogInError("Email ou mot de passe incorrect.")
             }else if (success) Router.push("/student/dashboard")
