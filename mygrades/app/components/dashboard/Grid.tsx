@@ -10,12 +10,11 @@ import BarGradeChart from './BarGradeChart'
 import { HiOutlinePlusCircle } from "react-icons/hi";
 import SubjectSelect from './SubjectSelect'
 import SelectedSubject from './SelectedSubject'
-
+import ProgressBar from './ProgressBar'
+import ConfettiExplosion from "react-confetti-explosion"
 
 
 const Grid = () => {
-
-  const subjectList = useStudentStore((state) => state.subjects)
 
   const pathName = usePathname()
 
@@ -42,7 +41,7 @@ const Grid = () => {
         {/* Stat Cards */}
         <div className='grid gap-4 grid-cols-12'>
           
-          <div className='col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
+          <div className='col-span-12 md:col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
             <div className='flex mb-4 items-start justify-between'>
               <div>
                   <div className='flex gap-5'>
@@ -53,9 +52,10 @@ const Grid = () => {
                   <p className='pt-1 text-xs text-stone-500'>Excellent travail !</p>
               </div>
             </div>
+                    <ProgressBar value={6}/>
           </div>
 
-          <div className='col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
+          <div className='col-span-12 md:col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
             <div className='flex mb-4 items-start justify-between'>
               <div>
                 <h3 className='text-stone-500 mb-2 text-lg'>Devoirs complétés</h3>
@@ -64,7 +64,7 @@ const Grid = () => {
             </div>
           </div>
 
-          <div className='col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
+          <div className='col-span-12 md:col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
             <div className='flex mb-4 items-start justify-between'>
               <div>
                 <h3 className='text-stone-500 mb-2 text-lg'>Evaluations complétées</h3>

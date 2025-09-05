@@ -4,7 +4,6 @@ import { useStudentStore } from '@/app/student/StudentStore';
 import React from 'react'
 import {HiBeaker} from "react-icons/hi"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useGradeModalStore } from '@/app/GlobalStateStore';
 
 const Graph = ({subjectID}: {subjectID:string}) => {
 

@@ -6,9 +6,11 @@ import { HiOutlineTrash } from "react-icons/hi";
 const SelectedSubject = () => {
 
     const SelectedSubjectID = useSelectedSubjectStore((state) => state.selectedSubjectID)
-    console.log("La matière sélectionnée est ", SelectedSubject)
 
     const subject = useStudentStore((state) => state.subjects.find((s) => s.id === SelectedSubjectID))
+    const subjectMoy = useStudentStore((state) => state.getSubjectMoy(SelectedSubjectID))
+
+    const nbGrade = subject?.grades.length
 
     const openGradeModal = useGradeModalStore((state) => state.open)
 
@@ -18,7 +20,7 @@ const SelectedSubject = () => {
 
     const handleDelete = () => {
         subject ? deleteSubject(subject.id) : null
-        setSelectedSubject(null)
+        setSelectedSubject("")
         
     }
 
@@ -29,18 +31,18 @@ const SelectedSubject = () => {
             <div className='flex justify-between items-center'>
                 <h1 className='p-4 text-2xl font-semibold'>{subject?.name}</h1>
                 <div className='flex gap-2'>
-                    <button onClick={openGradeModal} className='flex border rounded-lg h-12 md:h-10 p-2 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Note</span></button>
-                    <button className='bg-red-500 p-2 px-3 rounded-lg hover:bg-red-400 transition duration-300' onClick={handleDelete}><HiOutlineTrash className='text-white'/></button>
+                    <button onClick={openGradeModal} className='flex border rounded-lg h-10 md:h-10 p-2 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Note</span></button>
+                    <button className='bg-red-500 p-2 px-3 rounded-lg hover:cursor-pointer hover:bg-red-400 transition duration-300' onClick={handleDelete}><HiOutlineTrash className='text-white'/></button>
                 </div>
             </div> 
             <div className='grid grid-cols-2 m-4 gap-4 p-4 w-full'>
                 <div className='grid-cols-1'>
                     <span>Moyenne</span>
-                    <span className=' text-2xl font-bold'>{subject.grades.length > 0 ? (subject.grades.reduce((acc, grade) => acc + grade.value, 0) / subject.grades.length).toFixed(2) : "N/A"}</span>
+                    <span className='line-clamp-1 text-2xl font-bold'>{subjectMoy}</span>
                 </div>
                 <div className='grid-cols-1'>
                     <span>Nombre de note</span>
-                    <span className='text-xl font-bold'></span>
+                    <span className='line-clamp-1 text-2xl font-bold'>{nbGrade}</span>
                 </div>
             </div>
             <div>
