@@ -86,7 +86,7 @@ const page = () => {
             <div className='p-4'>
                 <div className='p-4 gap-10'>
                     <div>
-                        <h1 className='text-xl font-medium mb-2'>Prénom et nom</h1>
+                        <h1 className='text-xl font-medium mb-2 text-white'>Prénom et nom</h1> 
                         <div>
                             <input className='h-10 w-full mb-5 bg-white border border-stone-300 p-2 text-stone-600 rounded-sm' type="text" placeholder='Entrez votre nom et prénom' value={studentName} onChange={(n) => setStudentName(n.target.value)}/>
                         </div>
