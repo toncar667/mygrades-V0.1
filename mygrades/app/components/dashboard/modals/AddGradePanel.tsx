@@ -48,7 +48,7 @@ const AddGradePanel = () => {
         <div className='bg-white rounded-2xl shadow-xl p-6 w-full max-w-lg h-3/6'>
           <div className='flex justify-between'>
             
-            <h1 className='text-2xl font-semibold'>Ajouter une matière</h1>
+            <h1 className='text-2xl font-semibold'>Ajouter une note</h1>
             <button className='justify-end border rounded-md p-2 hover:bg-stone-50 hover:text-blue-400 transition duration-300' onClick={close}><HiMinus /></button>
             
           </div>
@@ -57,7 +57,8 @@ const AddGradePanel = () => {
 
             <input 
               className='border w-full rounded-sm p-2' 
-              type="text" 
+              type="number"
+              max={6} 
               placeholder='Entrez la nouvelle note' 
               value={gradeValue} 
               onChange={(e) => setGradeValue(e.target.value)} onBlur={() => {

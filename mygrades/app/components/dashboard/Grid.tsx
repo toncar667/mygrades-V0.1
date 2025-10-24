@@ -51,7 +51,7 @@ const Grid = () => {
                   <p className='pt-1 text-xs text-stone-500'>Excellent travail !</p>
               </div>
             </div>
-                    <ProgressBar value={6}/>
+                    <ProgressBar value={overAllMoy}/>
           </div>
 
           <div className='col-span-12 md:col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>

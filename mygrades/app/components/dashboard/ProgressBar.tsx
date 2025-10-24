@@ -19,7 +19,7 @@ const ProgressBar = ({ value }: { value: number }) => {
         {isExploding ? <ConfettiExplosion />: null}
       <div className="flex justify-between mb-1">
         <span className="text-sm font-medium text-gray-700">Progression</span>
-        <span className="text-sm font-medium text-gray-700">{value}</span>
+        <span className="invisible lg:visible text-sm font-medium text-gray-700">{value}</span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-3">
         <div
