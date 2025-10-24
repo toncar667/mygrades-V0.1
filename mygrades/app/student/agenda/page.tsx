@@ -2,6 +2,7 @@ import DashBoard from '@/app/components/dashboard/DashBoard'
 import SideBar from '@/app/components/sideBar/SideBar'
 import React from 'react'
 
+
 const page = () => {
   return (
     <div className="flex">
