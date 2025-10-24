@@ -11,7 +11,6 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import SubjectSelect from './SubjectSelect'
 import SelectedSubject from './SelectedSubject'
 import ProgressBar from './ProgressBar'
-import ConfettiExplosion from "react-confetti-explosion"
 
 
 const Grid = () => {

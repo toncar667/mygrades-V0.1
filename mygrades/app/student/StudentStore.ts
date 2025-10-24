@@ -79,12 +79,12 @@ export const useStudentStore = create<StudentStore>()(
                 let gradeSum = 0;
                 let moy = 0;
             
-                subjectGrade?.forEach(note => {
+                subjectGrade.forEach((note) => {
                     gradeSum += note.value
                 })
             
-                if(subjectGrade?.length !== 0) {
-                    moy = gradeSum / (subjectGrade?.length)
+                if(subjectGrade.length !== 0) {
+                    moy = gradeSum / (subjectGrade.length)
                 }
                 
                 const moyRounded = Math.round(moy * 2) / 2;
@@ -114,9 +114,15 @@ export const useStudentStore = create<StudentStore>()(
                 return moy;
             },
 
-            clearSubjectGrades: (subjectID: string) => {
+            clearSubjectGrades: (subjectId: string) => {
                 
-                const updatedSubjects = get().subjects.map(subject => subject.id === subjectID ? {...subject, grades: []}: subject)
+                const updatedSubjects = get().subjects.map((subject) =>{
+                    if(subject.id === subjectId){
+                        return {...subject, grades: []}   
+                    } else { return subject }
+                } 
+                )
+
                 set({ subjects: updatedSubjects })
                 
                 const auth = useAuthStore.getState()
@@ -169,7 +175,7 @@ export const useStudentStore = create<StudentStore>()(
                 
             },
             
-            addGrade: (subjectID:string, newGrade:Grade) => 
+            addGrade: (subjectID: string,newGrade: Grade) => 
             {
                 // sujet choisi dans la liste avec l'id correspondant au paramètre entré. si le sujet de ne correspond pas,
                 // on le laisse tel quel. 

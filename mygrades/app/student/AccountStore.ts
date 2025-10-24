@@ -44,6 +44,7 @@ export const useAuthStore = create<AuthStore>()(
 
             currentUser: null,
 
+            
             login: (email, password) => {
                 const user = get().users.find((u) => u.email === email && u.password === password)
                 
@@ -57,12 +58,14 @@ export const useAuthStore = create<AuthStore>()(
                     setStudentState.setAll(user.student)
         
                     set({ currentUser: { email: user.email, password: user.password, student: user.student} })
-        
+                    
+                    
                     return true
                 }
-        
                 return false
             },
+            
+            //logout déconnecte l'utilisateur et écrase le studentStore pour laisser place au prochain.
             logout: () => {
 
                 set({currentUser: null})
@@ -71,13 +74,16 @@ export const useAuthStore = create<AuthStore>()(
                 useStudentStore.getState().reset()
             },
 
+            //prend un parametre Account et l'ajoute à la liste de compte 
             createUser: (newAccount: Account) => set({users: [...get().users, newAccount]}),
 
+            //synchronise le Student du StudentStore et du AccountStore
             updateCurrentUserStudent: (updatedStudent: Student) => {
 
                 // on accède à l'état du currenUser
                 const auth = get();
-
+                
+                //vérifie qu'il est pas vide
                 if (auth.currentUser) {
 
                     //donné de l'utilisateur mise à jour
@@ -89,8 +95,11 @@ export const useAuthStore = create<AuthStore>()(
                     set({ 
                         currentUser: updatedUser,
 
-                        // on modifie l'utilisateur visé de la liste d'utilisateur pour que les changement persiste après deconnexion
-                        users: auth.users.map(user => user.email === updatedUser.email ? updatedUser : user)
+                        // on modifie l'utilisateur visé de la liste 
+                        // d'utilisateur pour que les changement persiste après deconnexion
+                        users: auth.users.map(
+                            user => user.email === updatedUser.email ? updatedUser : user
+                        )
                     });
                 }
             }

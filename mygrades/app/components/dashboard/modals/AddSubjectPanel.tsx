@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useSubjectModalStore } from '@/app/GlobalStateStore'
 import { useStudentStore } from '@/app/student/StudentStore'
 import { HiMinus } from "react-icons/hi";
-
+import randomColor from "randomcolor";
 
 const AddSubjectPanel = () => {
 
@@ -16,10 +16,9 @@ const AddSubjectPanel = () => {
   
   const subjectList = useStudentStore((state) => state.subjects)
 
-  
   const handleAddSubject = () => {
-    const getID = (subjectList.length + 1).toString()
-    addSubject({id:getID,color:"#3c83f6",  name: newSubject, grades:[]})
+    const newID = (subjectList.length + 1).toString()
+    addSubject({id:newID,color:randomColor(),  name: newSubject, grades:[]})
   }
 
   return (
@@ -34,8 +33,17 @@ const AddSubjectPanel = () => {
 
         <div className='mt-5'>
           <h1 className='text-xl font-medium'>Nom</h1>
-          <input value={newSubject} onChange={(s) => setNewSubject(s.target.value)} className='mt-2 h-10 w-full mb-5 bg-white border border-stone-300 p-2 text-stone-600 rounded-sm' type="text" placeholder='Nom de la matière...'/>
-          <button onClick={handleAddSubject} className='border rounded-md p-2 hover:bg-stone-50 hover:text-blue-400 transition duration-300'>Enregistrer</button>
+          <input 
+            value={newSubject} 
+            onChange={(s) => setNewSubject(s.target.value)} 
+            className='mt-2 h-10 w-full mb-5 bg-white border border-stone-300 p-2 text-stone-600 rounded-sm' type="text" 
+            placeholder='Nom de la matière...'
+          />
+          <button 
+            onClick={handleAddSubject} 
+            className='border rounded-md p-2 hover:bg-stone-50 hover:text-blue-400 transition duration-300'>
+              Enregistrer
+          </button>
         </div>
       </div>
     </div>
