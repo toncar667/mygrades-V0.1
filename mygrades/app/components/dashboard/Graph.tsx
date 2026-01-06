@@ -4,7 +4,8 @@ import { useStudentStore } from '@/app/student/StudentStore';
 import React from 'react'
 import {HiBeaker} from "react-icons/hi"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale/fr';
 const Graph = ({subjectID}: {subjectID:string}) => {
 
     let subject = useStudentStore((state) => state.subjects.find((s) => s.id === subjectID))
@@ -18,7 +19,7 @@ const Graph = ({subjectID}: {subjectID:string}) => {
     const data = subject?.grades.map((note) => ({
         note: note.value,
         id: note.id,
-        date: note.date,
+        date: format(note.date, "dd MMMM yyyy", { locale: fr }),
     })) || [];
 
     if (!subject) return <div className='col-span-8 p-4'>Matière introuvable</div>;

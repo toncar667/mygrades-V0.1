@@ -16,8 +16,12 @@ const AddGradePanel = () => {
 
     const addGrade = useStudentStore((state) => state.addGrade)
 
+    const [checkValue, setCheckValue] = useState<boolean>(true)
+    const [error, setError] = useState<string>("")
+
     const latestGrades = useStudentStore((state) => state.latestGrade)
 
+    
     const [newGrade, setNewGrade] = useState<Grade>({
       //id accéder a la liste de tt les id et +1 (à faire)
         id: (latestGrades.grades.length + 1).toString(),
@@ -25,15 +29,26 @@ const AddGradePanel = () => {
         date: new Date().toString(),
     })
     
-
     const selectedSubjectID = useSelectedSubjectStore((state) => state.selectedSubjectID)
     const subject = useStudentStore((state) => state.subjects.find((s) => s.id === selectedSubjectID))
 
-    const [gradeValue, setGradeValue] = useState<string>('')
+    const [gradeValue, setGradeValue] = useState<string>("")
 
     const handleAddGrade = () => {
 
         const targetSubject = subject
+
+        if (!gradeValue || Number(gradeValue) <= 0) {
+          setError("Veuillez entrer une note valide")
+          setCheckValue(false)
+          return
+        }
+
+        if (Number(gradeValue) < 1 || Number(gradeValue) > 6) {
+          setError("La note doit être comprise entre 1 et 6 !")
+          setCheckValue(false)
+          return
+        }
 
         if(targetSubject && newGrade){
             addGrade(targetSubject.id ,newGrade)
@@ -65,12 +80,19 @@ const AddGradePanel = () => {
                 const num = Number(gradeValue)
                 const id = (latestGrades.grades.length + 1).toString()
                 if (!isNaN(num)) {
+                  if(Number(gradeValue) > 6) {
+                    setError("La note doit être comprise entre 1 et 6 !")
+                    setCheckValue(false)
+                  }else{
                     setNewGrade({ ...newGrade, id: id, value: num })
+                    setCheckValue(true)
+                  }
                 }
               }}
             />
             <button onClick={handleAddGrade} className='flex border rounded-sm h-12 md:h-10 p-2 mt-4 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Ajouter</span></button>
-            <span className='text-sm font-mono'>Une nouvelle note sera ajouté à <span className='font-bold'>{subject?.name}</span></span>
+            <span className='text-sm font-mono'>Une nouvelle note sera ajouté à <span className='font-bold'>{subject?.name}</span></span><br />
+            {!checkValue && <span className="text-sm text-red-500">{error}</span>}
           </div>
         </div>
       </div>

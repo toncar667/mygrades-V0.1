@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Student } from "./StudentStore"
+import { Settings, Student } from "./StudentStore"
 import { useStudentStore } from "./StudentStore";
 import { persist } from "zustand/middleware";
 
@@ -10,6 +10,7 @@ export type Account = {
 }
 
 type AuthStore = {
+    settings: Settings
     users: Account[]
     currentUser: Account | null
     login: (email: string, password: string) => boolean
@@ -24,75 +25,93 @@ export const useAuthStore = create<AuthStore>()(
     persist(
         (set, get) => ({
             users: [
-                {  
-                        email: "tonkstur@gmail.com", 
-                        password: "PASTUmb923",
-                        student: {
+                {
+                    email: "tonkstur@gmail.com",
+                    password: "PASTUmb923",
+                    student: {
+                        name: "Tonka Sturzenegger",
+                        subjects: [],
+                        email: "tonkstur@gmail.com",
+                        settings: {
+                            plusPointMode: false,
                             name: "Tonka Sturzenegger",
-                            subjects: [],
-                        } 
-                    },
-                    { 
-                        email: "ennio.campart@outlook.com", 
-                        password: "abcd",
-                        student: {
-                            name:"Ennio Campart",
-                            subjects: [],
+                            email: "tonkstur@gmail.com",
                         }
-                    },
+                    }
+                },
+                {
+                    email: "ennio.campart@outlook.com",
+                    password: "abcd",
+                    student: {
+                        name: "Ennio Campart",
+                        subjects: [],
+                        email: "ennio.campart@outlook.com",
+                        settings: {
+                            plusPointMode: false,
+                            name: "Ennio Campart",
+                            email: "ennio.campart@outlook.com"
+                        }
+                    }
+                },
             ],
 
             currentUser: null,
 
-            
+            settings: {
+                plusPointMode: false,
+                name: "",
+                email: ""
+            },
+
             login: (email, password) => {
                 const user = get().users.find((u) => u.email === email && u.password === password)
-                
-                if(user) {
+
+                if (user) {
 
                     //connecte l'utilisateur
                     set({ currentUser: user })
-                    
-                    
+
+
                     const setStudentState = useStudentStore.getState()
                     setStudentState.setAll(user.student)
-        
-                    set({ currentUser: { email: user.email, password: user.password, student: user.student} })
-                    
-                    
+
+                    set({ currentUser: { email: user.email, password: user.password, student: user.student } })
+
+
                     return true
                 }
                 return false
             },
-            
+
             //logout déconnecte l'utilisateur et écrase le studentStore pour laisser place au prochain.
             logout: () => {
 
-                set({currentUser: null})
-                
+                set({ currentUser: null })
+
                 // on écrase les donnée pour laisser un studentStore vierge pour la prochaine connexion
                 useStudentStore.getState().reset()
             },
 
             //prend un parametre Account et l'ajoute à la liste de compte 
-            createUser: (newAccount: Account) => set({users: [...get().users, newAccount]}),
+            createUser: (newAccount: Account) => set({ users: [...get().users, newAccount] }),
 
             //synchronise le Student du StudentStore et du AccountStore
             updateCurrentUserStudent: (updatedStudent: Student) => {
 
                 // on accède à l'état du currenUser
                 const auth = get();
-                
+
                 //vérifie qu'il est pas vide
                 if (auth.currentUser) {
 
                     //donné de l'utilisateur mise à jour
                     const updatedUser = {
                         ...auth.currentUser,
-                        student: updatedStudent
+                        student: updatedStudent,
+                        settings: updatedStudent.settings
                     };
 
-                    set({ 
+                    set({
                         currentUser: updatedUser,
 
                         // on modifie l'utilisateur visé de la liste 

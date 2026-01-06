@@ -11,6 +11,8 @@ import { HiOutlinePlusCircle } from "react-icons/hi";
 import SubjectSelect from './SubjectSelect'
 import SelectedSubject from './SelectedSubject'
 import ProgressBar from './ProgressBar'
+import Agenda from '../agenda/Agenda'
+import DayInfoPanel from '../agenda/DayInfosPanel'
 
 
 const Grid = () => {
@@ -21,7 +23,9 @@ const Grid = () => {
 
   const GetOverallMoy = useStudentStore((state) => state.getOverallMoy())
   const [overAllMoy, setOverAllMoy] = useState<number>(0)
-  
+
+  const [selectedDate, setSelectedDate] = useState(new Date())
+
   useEffect(() => {
     setOverAllMoy(GetOverallMoy)
   })
@@ -85,9 +89,22 @@ const Grid = () => {
   
   else if (pathName === "/student/agenda") {
     return (
-      <div className='px-4 grid gap-3 grid-cols-12'>
-        
-      </div>
+      <div className='px-6'>
+          <div className='flex w-full justify-between'>
+            <div>
+              <h1 className='pt-4 font-bold text-4xl'>Agenda</h1>
+              <p className='pb-6 text-stone-600'>Gérez votre emploi du temps</p>
+            </div>
+          </div>
+          <div className='grid grid-cols-3 gap-5'>
+            <div className='rounded-lg border col-span-3 lg:col-span-1 p-4 shadow-sm transition'>
+              <DayInfoPanel selectedDate={selectedDate} />
+            </div>
+            <div className='rounded-lg border col-span-3 lg:col-span-2 p-4 shadow-sm transition'>
+              <Agenda selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
+            </div>
+          </div>
+        </div>
     )
   }
   

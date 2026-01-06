@@ -6,7 +6,7 @@ const SubjectSelect = () => {
 
     const subjects = useStudentStore((state) => state.subjects)
     
-    const [selectedSubject, setSelectedSubject] = useState<Subject>({id:"", name:"", color:"", grades:[]});
+    const [selectedSubject, setSelectedSubject] = useState<Subject>({id:"", name:"", color:"", grades:[], events:[]});
 
     const setGlobalSelectedSubject = useSelectedSubjectStore((state) => state.setSelectedSubject)
 

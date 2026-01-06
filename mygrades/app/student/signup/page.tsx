@@ -45,6 +45,7 @@ const page = () => {
             color: "#3c83f6",
             name: selectedOption,
             grades: [],
+            events: []
         };
         return newSubject;
         } else {

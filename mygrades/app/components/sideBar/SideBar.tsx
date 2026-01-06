@@ -14,7 +14,7 @@ const SideBar = () => {
     <div>
       {/* Bouton pour mobile */}
       <button
-        className="md:hidden fixed mt-4 z-50 right-4 text-2xl text-black bg-white p-2 rounded-lg shadow-md"
+        className="md:hidden cursor-pointer fixed mt-4 z-50 right-4 text-2xl text-black bg-white p-2 rounded-lg shadow-md"
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
         {sidebarOpen ? <IoMdClose /> : <GiHamburgerMenu />}
@@ -29,6 +29,8 @@ const SideBar = () => {
         <div className="p-4">
           <AccountToggle />
           <RouteSelect />
+        </div>
+        <div>
         </div>
       </div>
     </div>

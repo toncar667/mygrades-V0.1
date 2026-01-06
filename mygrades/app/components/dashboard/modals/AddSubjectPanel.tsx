@@ -18,7 +18,8 @@ const AddSubjectPanel = () => {
 
   const handleAddSubject = () => {
     const newID = (subjectList.length + 1).toString()
-    addSubject({id:newID,color:randomColor(),  name: newSubject, grades:[]})
+    addSubject({id:newID,color:randomColor(),  name: newSubject, grades:[], events:[]})
+    close()
   }
 
   return (

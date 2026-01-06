@@ -1,12 +1,19 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { useAuthStore } from "./AccountStore";
+import { Event } from "../components/dashboard/modals/AddEventPanel";
 
 type Grade = {
-    id:string;
+    id: string;
     value: number;
     date: string;
 };
+
+export type Settings = {
+    plusPointMode: boolean;
+    name: string;
+    email: string;
+}
 
 export type Subject = {
     id: string;
@@ -15,15 +22,19 @@ export type Subject = {
     grades: Grade[];
     value?: string;
     label?: string;
+    events: Event[];
 }
 
 export type Student = {
     name: string;
+    email: string;
     subjects: Subject[];
+    settings: Settings;
 }
 
 export type StudentStore = Student & {
     latestGrade: Subject;
+    updateSettings: (settings: Settings) => void;
     updateLatestGrade: () => void;
     setName: (newName: string) => void;
     addSubject: (subject: Subject) => void;
@@ -32,6 +43,8 @@ export type StudentStore = Student & {
     clearSubjectGrades: (subjectID: string) => void;
     getSubjectMoy: (subjectID: string) => number;
     getOverallMoy: () => number;
+    addEvent: (subjectID: string, event: Event) => void;
+    removeEvent: (eventID: string) => void;
     setAll: (student: Student) => void;
     reset: () => void;
 }
@@ -39,29 +52,100 @@ export type StudentStore = Student & {
 export const useStudentStore = create<StudentStore>()(
     persist(
         (set, get) => ({
-            name:"",
-            email:"",
+            name: "",
+            email: "",
             subjects: [],
+
+            settings: {
+                plusPointMode: false,
+                name: "",
+                email: ""
+            },
+
+            updateSettings: (settings: Settings) => {
+                set(() => ({ settings: settings }))
+
+                set({
+                    name: settings.name,
+                    email: settings.email
+                })
+
+                const auth = useAuthStore.getState()
+
+                if (auth.currentUser) {
+                    auth.updateCurrentUserStudent({
+                        name: settings.name,
+                        subjects: get().subjects,
+                        settings: settings,
+                        email: settings.email
+                    })
+                }
+            },
+
 
             latestGrade: {
                 id: "0",
                 name: "Évolution des Notes",
                 color: "",
-                grades: []
+                grades: [],
+                events: []
+            },
+
+            addEvent: (subjectID: string, event: Event) => {
+
+                const updatedSubjects = get().subjects.map((s) => s.id === subjectID ? { ...s, events: [...s.events, event] } : s)
+
+                set({
+                    subjects: updatedSubjects
+                })
+
+                console.log("1: added:", event, " to:", subjectID)
+                const auth = useAuthStore.getState()
+
+                if (auth.currentUser) {
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
+                    })
+                }
+
+            },
+
+            removeEvent: (eventID: string) => {
+                const updatedSubjects = get().subjects.map((s) => ({
+                    ...s,
+                    events: s.events ? s.events.filter((ev) => ev.id !== eventID) : []
+                }))
+
+                set({ subjects: updatedSubjects })
+
+                const auth = useAuthStore.getState()
+                if (auth.currentUser) {
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
+                    })
+                }
             },
 
             updateLatestGrade: () => {
                 const updatedGrades = get().subjects.flatMap(s => s.grades)
-                
+
                 set({
-                    latestGrade: {id: "0", name: "Évolution des Notes", color: "", grades: updatedGrades}
+                    latestGrade: { id: "0", name: "Évolution des Notes", color: "", grades: updatedGrades, events: [] }
                 })
             },
-                
+
 
             setAll: (student: Student) => set(() => ({
                 name: student.name,
-                subjects: student.subjects
+                subjects: student.subjects,
+                settings: student.settings,
+                email: student.email
             })),
 
             reset: () => set(() => ({
@@ -70,7 +154,7 @@ export const useStudentStore = create<StudentStore>()(
                 subjects: []
             })),
 
-            setName: (newName: string) => set(() => ({name: newName})),
+            setName: (newName: string) => set(() => ({ name: newName })),
 
             getSubjectMoy: (subjectID: string) => {
 
@@ -78,19 +162,19 @@ export const useStudentStore = create<StudentStore>()(
 
                 let gradeSum = 0;
                 let moy = 0;
-            
+
                 subjectGrade.forEach((note) => {
                     gradeSum += note.value
                 })
-            
-                if(subjectGrade.length !== 0) {
+
+                if (subjectGrade.length !== 0) {
                     moy = gradeSum / (subjectGrade.length)
                 }
-                
+
                 const moyRounded = Math.round(moy * 2) / 2;
-                
+
                 return moyRounded;
-                
+
             },
 
             getOverallMoy: () => {
@@ -107,7 +191,7 @@ export const useStudentStore = create<StudentStore>()(
                     })
                 });
 
-                if(totalCount !== 0) {
+                if (totalCount !== 0) {
                     moy = Math.round((totalSum / totalCount) * 2) / 2;
                 }
 
@@ -115,93 +199,103 @@ export const useStudentStore = create<StudentStore>()(
             },
 
             clearSubjectGrades: (subjectId: string) => {
-                
-                const updatedSubjects = get().subjects.map((subject) =>{
-                    if(subject.id === subjectId){
-                        return {...subject, grades: []}   
+
+                const updatedSubjects = get().subjects.map((subject) => {
+                    if (subject.id === subjectId) {
+                        return { ...subject, grades: [] }
                     } else { return subject }
-                } 
+                }
                 )
 
                 set({ subjects: updatedSubjects })
-                
+
                 const auth = useAuthStore.getState()
 
-                if(auth.currentUser){
+                if (auth.currentUser) {
                     auth.updateCurrentUserStudent({
                         name: get().name,
-                        subjects: updatedSubjects
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
                     })
                 }
             },
 
             addSubject: (subject: Subject) => {
-                
+
                 const updatedSubjects = [...get().subjects, subject]
 
-                set({subjects: updatedSubjects})
+                set({ subjects: updatedSubjects })
 
                 const auth = useAuthStore.getState()
 
-                if(auth.currentUser){
+                if (auth.currentUser) {
                     auth.updateCurrentUserStudent({
                         name: get().name,
-                        subjects: updatedSubjects
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
                     })
                 }
             },
 
             removeSubject: (subjectID: string) => {
                 const updatedSubjects = get().subjects.filter((s) => s.id !== subjectID)
-                set({subjects: updatedSubjects})
+                set({ subjects: updatedSubjects })
 
                 set({
                     latestGrade: {
                         id: "0",
                         name: "Évolution des Notes",
                         color: "",
-                        grades: updatedSubjects.flatMap(s => s.grades)
+                        grades: updatedSubjects.flatMap(s => s.grades),
+                        events: []
                     }
-            });
+                });
 
                 const auth = useAuthStore.getState()
 
-                if(auth.currentUser){
+                if (auth.currentUser) {
                     auth.updateCurrentUserStudent({
                         name: get().name,
-                        subjects: updatedSubjects
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
                     })
                 }
-                
+
             },
-            
-            addGrade: (subjectID: string,newGrade: Grade) => 
-            {
+
+            addGrade: (subjectID: string, newGrade: Grade) => {
                 // sujet choisi dans la liste avec l'id correspondant au paramètre entré. si le sujet de ne correspond pas,
                 // on le laisse tel quel. 
 
-                const updatedSubjects = get().subjects.map((s) => s.id === subjectID ? {...s, grades: [...s.grades, newGrade]}  :  s)
-                
+                const updatedSubjects = get().subjects.map((s) => s.id === subjectID ? { ...s, grades: [...s.grades, newGrade] } : s)
+
                 // quand on modifie l'état d'un sujet, on modifie l'état de la liste des sujet.
                 // donc on vient modifier la liste de sujet avec une nouvelle liste contenant tout les sujet ainsi que
                 // celui qui vient d'être modifié
 
-                set({subjects: updatedSubjects})
-                
+                set({ subjects: updatedSubjects })
+
                 // ajoute à la liste des dernieres notes
-                set({latestGrade: {
-                    ...get().latestGrade,
-                    grades: [...get().latestGrade.grades, newGrade]
-                }}) 
+                set({
+                    latestGrade: {
+                        ...get().latestGrade,
+                        grades: [...get().latestGrade.grades, newGrade]
+                    }
+                })
 
                 get().updateLatestGrade()
 
                 // synchro entre le StudentStore et AuthStore
                 const auth = useAuthStore.getState()
-                if(auth.currentUser){
+                if (auth.currentUser) {
                     auth.updateCurrentUserStudent({
                         name: get().name,
-                        subjects: updatedSubjects
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
                     })
                 }
             }
