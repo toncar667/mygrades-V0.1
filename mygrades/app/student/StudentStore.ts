@@ -3,8 +3,9 @@ import { persist } from "zustand/middleware";
 import { useAuthStore } from "./AccountStore";
 import { Event } from "../components/dashboard/modals/AddEventPanel";
 
-type Grade = {
+export type Grade = {
     id: string;
+    name: string;
     value: number;
     date: string;
 };
@@ -34,12 +35,14 @@ export type Student = {
 
 export type StudentStore = Student & {
     latestGrade: Subject;
+    getPlusPoint: (subjectMoy: number) => string;
     updateSettings: (settings: Settings) => void;
     updateLatestGrade: () => void;
     setName: (newName: string) => void;
     addSubject: (subject: Subject) => void;
     removeSubject: (subjectID: string) => void;
     addGrade: (subjectID: string, newGrade: Grade) => void;
+    removeGrade: (subjectID: string, gradeID: string) => void;
     clearSubjectGrades: (subjectID: string) => void;
     getSubjectMoy: (subjectID: string) => number;
     getOverallMoy: () => number;
@@ -60,6 +63,13 @@ export const useStudentStore = create<StudentStore>()(
                 plusPointMode: false,
                 name: "",
                 email: ""
+            },
+
+            getPlusPoint: (subjectMoy: number) => {
+                if (subjectMoy === 4) return "0"
+                else if (subjectMoy > 4) return "+" + Math.abs(4 - subjectMoy)
+                else if (subjectMoy < 4 && subjectMoy > 0) return "-" + (4 - subjectMoy)
+                else return "N/A"
             },
 
             updateSettings: (settings: Settings) => {
@@ -252,6 +262,34 @@ export const useStudentStore = create<StudentStore>()(
                         events: []
                     }
                 });
+
+                const auth = useAuthStore.getState()
+
+                if (auth.currentUser) {
+                    auth.updateCurrentUserStudent({
+                        name: get().name,
+                        subjects: updatedSubjects,
+                        settings: get().settings,
+                        email: get().email
+                    })
+                }
+
+            },
+
+            removeGrade(subjectID, gradeID) {
+
+                const updatedSubjects = get().subjects.map(s => s.id === subjectID ? { ...s, grades: s.grades.filter((g) => g.id !== gradeID) } : s)
+
+                set({ subjects: updatedSubjects })
+
+
+                const updateLatestGrades = get().latestGrade.grades.filter((g) => g.id !== gradeID)
+                set({
+                    latestGrade: {
+                        ...get().latestGrade,
+                        grades: updateLatestGrades,
+                    }
+                })
 
                 const auth = useAuthStore.getState()
 

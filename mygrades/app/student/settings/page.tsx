@@ -8,11 +8,19 @@ import { useRouter } from 'next/navigation'
 const page = () => {
 
     const router = useRouter()
+    const settings = useStudentStore((state) => state.settings)
 
-    const [isPlusPointMode, setIsPlusPointMode] = useState(false)
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
+    const [isPlusPointMode, setIsPlusPointMode] = useState(settings.plusPointMode)
+    const [name, setName] = useState(settings.name)
+    const [email, setEmail] = useState(settings.email)
     const updateSettings = useStudentStore((state) => state.updateSettings)
+
+    React.useEffect(() => {
+        setName(settings.name);
+        setEmail(settings.email);
+        setIsPlusPointMode(settings.plusPointMode);
+    }, [settings]);
+
 
     const handleUpdateSettings = () => {
 
@@ -39,19 +47,19 @@ const page = () => {
 
             <div className='p-4'>
                 <h2 className='text-white text-xl font-semibold'>Nom</h2>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className='p-2 rounded-lg border border-white text-white' />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className='p-2 rounded-lg border border-white text-white bg-transparent' />
             </div>
 
             <div className='p-4'>
                 <h2 className='text-white text-xl font-semibold'>Email</h2>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className='p-2 rounded-lg border border-white text-white' />
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className='p-2 rounded-lg border border-white text-white bg-transparent' />
             </div>
 
 
             <div className='p-4'>
                 <h2 className='text-white text-xl font-semibold'>Mode de notation</h2>
                 <div>
-                    <input type="checkbox" checked={isPlusPointMode} onChange={() => setIsPlusPointMode(!isPlusPointMode)} className='w-4 h-4' />
+                    <input checked={isPlusPointMode} type="checkbox" onChange={() => setIsPlusPointMode(!isPlusPointMode)} className='w-4 h-4 bg-white border-white ring-0 focus:ring-0 ring-red-900' />
                     <label className='text-white mx-2' htmlFor="">Plus Point</label>
                 </div>
             </div>

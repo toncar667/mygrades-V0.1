@@ -18,12 +18,21 @@ const SelectedSubject = () => {
     const setSelectedSubject = useSelectedSubjectStore((state) => state.setSelectedSubject)
 
     const deleteSubject = useStudentStore((state) => state.removeSubject)
+    const deleteGrade = useStudentStore((state) => state.removeGrade)
 
-    const handleDelete = () => {
+    const handleDeleteSubject = () => {
         subject ? deleteSubject(subject.id) : null
         setSelectedSubject("")
 
     }
+
+    const handleDeleteGrade = (gradeID: string) => {
+        subject ? deleteGrade(subject.id, gradeID) : null
+    }
+
+    const getPlusPoint = useStudentStore((state) => state.getPlusPoint)
+
+    const isPlusPointMode = useStudentStore((state) => state.settings.plusPointMode)
 
     return (
         <div className=''>
@@ -33,27 +42,31 @@ const SelectedSubject = () => {
                         <h1 className='p-4 text-2xl font-semibold'>{subject?.name}</h1>
                         <div className='flex gap-2'>
                             <button onClick={openGradeModal} className='flex border rounded-lg h-10 md:h-10 p-2 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Note</span></button>
-                            <button className='bg-red-500 p-2 px-3 rounded-lg hover:cursor-pointer hover:bg-red-400 transition duration-300' onClick={handleDelete}><HiOutlineTrash className='text-white' /></button>
+                            <button className='bg-red-500 p-2 px-3 rounded-lg hover:cursor-pointer hover:bg-red-400 transition duration-300' onClick={handleDeleteSubject}><HiOutlineTrash className='text-white' /></button>
                         </div>
                     </div>
                     <div className='grid grid-cols-3 m-4 gap-4 p-4 w-full'>
                         <div className='grid-cols-1'>
-                            <span>Moyenne</span>
-                            <span className='line-clamp-1 text-2xl font-bold'>{subjectMoy}</span>
+                            <span>{isPlusPointMode ? "Plus Point" : "Moyenne"}</span>
+                            <span className='line-clamp-1 text-2xl font-bold'>{isPlusPointMode ? getPlusPoint(subjectMoy) : subjectMoy}</span>
                         </div>
                         <div className='grid-cols-1'>
-                            <span>Note</span>
+                            <span>Note(s)</span>
                             <span className='line-clamp-1 text-2xl font-bold'>{nbGrade}</span>
                         </div>
                         <div className='grid-cols-1 overflow-hidden'>
-                            <span>Devoir/Evaluation</span>
+                            <span>Devoir(s)/Évaluation(s)</span>
                             <span className='line-clamp-1 text-2xl font-bold'>{nbEvent}</span>
                         </div>
                     </div>
                     <div>
                         <h1 className='p-4 text-base font-semibold'>Historique des notes</h1>
                         {subject.grades.map((grade) => (
-                            <div key={grade.id} className='flex justify-between border-b p-4'><span className='font-medium'>Note: {grade.value}</span></div>))}
+                            <div key={grade.id} className='flex justify-between border-b p-4'>
+                                <span className='font-medium'>{grade.name ? grade.name + " : " + grade.value : "Note : " + grade.value}</span>
+                                <span className='justify-self-end'>Point: {getPlusPoint(grade.value)}</span>
+                                <button onClick={() => handleDeleteGrade(grade.id)} className='bg-transparent p-2 px-3 rounded-lg hover:cursor-pointer hover:bg-red-400 transition duration-300'><HiOutlineTrash className='text-red-500' /></button>
+                            </div>))}
                     </div>
                 </div>
 

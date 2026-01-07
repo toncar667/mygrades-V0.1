@@ -32,7 +32,16 @@ const Grid = () => {
 
   const studentName = useStudentStore((state) => state.name)
 
-  if(pathName === "/student/dashboard") {
+  const isPlusPointMode = useStudentStore((state) => state.settings.plusPointMode)
+
+  const subjectMoy = useStudentStore((state) => state.getOverallMoy())
+
+  const getPlusPoint = () => {
+    if (subjectMoy > 4) return "+" + Math.abs(4 - subjectMoy)
+    else if (subjectMoy < 4) return "-" + (4 - subjectMoy)
+  }
+
+  if (pathName === "/student/dashboard") {
     return (
       <div className='px-6'>
         <div className='flex'>
@@ -43,19 +52,19 @@ const Grid = () => {
         </div>
         {/* Stat Cards */}
         <div className='grid gap-4 grid-cols-12'>
-          
+
           <div className='col-span-12 md:col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
             <div className='flex mb-4 items-start justify-between'>
               <div>
-                  <div className='flex gap-5'>
-                    <h3 className='text-stone-500 mb-2 text-lg'>Moyenne Générale</h3>
-                    <div className='text-xl'><HiOutlineTrendingUp /></div>
-                  </div>
-                  <p className={`text-4xl font-semibold`}>{overAllMoy}</p>
-                  <p className='pt-1 text-xs text-stone-500'>Excellent travail !</p>
+                <div className='flex gap-5'>
+                  <h3 className='text-stone-500 mb-2 text-lg'>{isPlusPointMode ? "Plus Point" : "Moyenne Générale"}</h3>
+                  <div className='text-xl'><HiOutlineTrendingUp /></div>
+                </div>
+                <p className={`text-4xl font-semibold`}>{isPlusPointMode ? getPlusPoint() : overAllMoy}</p>
+                <p className='pt-1 text-xs text-stone-500'>Excellent travail !</p>
               </div>
             </div>
-                    <ProgressBar value={overAllMoy}/>
+            <ProgressBar value={overAllMoy} />
           </div>
 
           <div className='col-span-12 md:col-span-4 p-8 rounded-xl bg-stone-100 shadow-sm'>
@@ -75,59 +84,59 @@ const Grid = () => {
               </div>
             </div>
           </div>
-          
+
         </div>
 
         {/* Graph */}
-          <div className='mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6'>
-              <BarGradeChart title="Moyennes par matières"/>     
-              <Graph subjectID={'0'} />
-          </div>
+        <div className='mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          <BarGradeChart title="Moyennes par matières" />
+          <Graph subjectID={'0'} />
+        </div>
       </div>
     )
-  } 
-  
+  }
+
   else if (pathName === "/student/agenda") {
     return (
       <div className='px-6'>
-          <div className='flex w-full justify-between'>
-            <div>
-              <h1 className='pt-4 font-bold text-4xl'>Agenda</h1>
-              <p className='pb-6 text-stone-600'>Gérez votre emploi du temps</p>
-            </div>
-          </div>
-          <div className='grid grid-cols-3 gap-5'>
-            <div className='rounded-lg border col-span-3 lg:col-span-1 p-4 shadow-sm transition'>
-              <DayInfoPanel selectedDate={selectedDate} />
-            </div>
-            <div className='rounded-lg border col-span-3 lg:col-span-2 p-4 shadow-sm transition'>
-              <Agenda selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>
-            </div>
+        <div className='flex w-full justify-between'>
+          <div>
+            <h1 className='pt-4 font-bold text-4xl'>Agenda</h1>
+            <p className='pb-6 text-stone-600'>Gérez votre emploi du temps</p>
           </div>
         </div>
+        <div className='grid grid-cols-3 gap-5'>
+          <div className='rounded-lg border col-span-3 lg:col-span-1 p-4 shadow-sm transition'>
+            <DayInfoPanel selectedDate={selectedDate} />
+          </div>
+          <div className='rounded-lg border col-span-3 lg:col-span-2 p-4 shadow-sm transition'>
+            <Agenda selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
+          </div>
+        </div>
+      </div>
     )
   }
-  
+
   else if (pathName === "/student/subjects") {
     return (
-        <div className='px-6'>
-          <div className='flex w-full justify-between'>
-            <div>
-              <h1 className='pt-4 font-bold text-4xl'>Mes matières</h1>
-              <p className='pb-6 text-stone-600'>Gérez vos matières et suivez vos notes !</p>
-            </div>
-              <button onClick={openSubjectPanel} className='flex border rounded-sm h-12 md:h-10 p-2 mt-4 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Ajouter une matière</span></button>
+      <div className='px-6'>
+        <div className='flex w-full justify-between'>
+          <div>
+            <h1 className='pt-4 font-bold text-4xl'>Mes matières</h1>
+            <p className='pb-6 text-stone-600'>Gérez vos matières et suivez vos notes !</p>
           </div>
-          <div className='grid grid-cols-3 gap-5'>
-            <div className='rounded-lg border col-span-3 lg:col-span-1 p-4 shadow-sm transition'>
-              <h1 className='p-4 text-2xl font-semibold'>Matières</h1>
-              <SubjectSelect />
-            </div>
-            <div className='rounded-lg border col-span-3 lg:col-span-2 p-4 shadow-sm transition'>
-              <SelectedSubject />
-            </div>
+          <button onClick={openSubjectPanel} className='flex border rounded-sm h-12 md:h-10 p-2 mt-4 text-white cursor-pointer bg-[#3c83f6] hover:bg-blue-600 transition duration-300 gap-2'><div className='pt-0.5'><HiOutlinePlusCircle /></div> <span className='text-sm font-semibold'>Ajouter une matière</span></button>
+        </div>
+        <div className='grid grid-cols-3 gap-5'>
+          <div className='rounded-lg border col-span-3 lg:col-span-1 p-4 shadow-sm transition'>
+            <h1 className='p-4 text-2xl font-semibold'>Matières</h1>
+            <SubjectSelect />
+          </div>
+          <div className='rounded-lg border col-span-3 lg:col-span-2 p-4 shadow-sm transition'>
+            <SelectedSubject />
           </div>
         </div>
+      </div>
     )
   }
 

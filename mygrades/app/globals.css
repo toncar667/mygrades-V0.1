@@ -47,10 +47,15 @@
   --ring: oklch(0.709 0.01 56.259);
 }
 
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
